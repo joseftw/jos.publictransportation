@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "JOS.TrafikLab.Functions": {
+      "commandName": "Project",
+      "environmentVariables": {
+        
+      }
+    }
+  }
+}

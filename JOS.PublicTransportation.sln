@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28822.285
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JOS.TrafikLab.Functions", "src\JOS.TrafikLab.Functions\JOS.TrafikLab.Functions.csproj", "{92498E87-F1B4-41D2-8DDD-9367FF5B204E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{70729267-5E57-4B59-8DDB-29040083A248}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JOS.TrafikLab.Client", "src\JOS.TrafikLab.Client\JOS.TrafikLab.Client.csproj", "{953C72A3-B987-4D98-8B33-81D4CAAB4603}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{92498E87-F1B4-41D2-8DDD-9367FF5B204E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92498E87-F1B4-41D2-8DDD-9367FF5B204E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92498E87-F1B4-41D2-8DDD-9367FF5B204E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92498E87-F1B4-41D2-8DDD-9367FF5B204E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{953C72A3-B987-4D98-8B33-81D4CAAB4603}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{953C72A3-B987-4D98-8B33-81D4CAAB4603}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{953C72A3-B987-4D98-8B33-81D4CAAB4603}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{953C72A3-B987-4D98-8B33-81D4CAAB4603}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{92498E87-F1B4-41D2-8DDD-9367FF5B204E} = {70729267-5E57-4B59-8DDB-29040083A248}
+		{953C72A3-B987-4D98-8B33-81D4CAAB4603} = {70729267-5E57-4B59-8DDB-29040083A248}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {168C41FB-F348-4378-8FE0-FB2F42EEF754}
+	EndGlobalSection
+EndGlobal
