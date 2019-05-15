@@ -1,36 +1,79 @@
-﻿using System.Linq;
-using JOS.TrafikLab.Client;
+﻿using JOS.TrafikLab.Client;
+using JOS.TrafikLab.Core;
 using JOS.TrafikLab.Functions;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Hosting;
+using JOS.TrafikLab.Functions.Features.StopPoints;
+using JOS.TrafikLab.Functions.Infrastructure;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
-[assembly: WebJobsStartup(typeof(StartUp))]
+[assembly: FunctionsStartup(typeof(Startup))]
 namespace JOS.TrafikLab.Functions
 {
-    public class StartUp : IWebJobsStartup
+    public class Startup : FunctionsStartup
     {
-        public void Configure(IWebJobsBuilder builder)
+        public override void Configure(IFunctionsHostBuilder builder)
         {
+            var config = SetupConfiguration(builder.Services);
+
+            builder.Services.AddSingleton<IUpdateStopPointsBlobCommand, UpdateStopPointsBlobCommand>();
+
+            AddSerializer(builder.Services);
+            AddAzureStorage(config, builder.Services);
+            AddTrafikLab(config, builder.Services);
+        }
+
+        private static IConfiguration SetupConfiguration(IServiceCollection services)
+        {
+            var serviceProvider = services.BuildServiceProvider();
             var configurationBuilder = new ConfigurationBuilder();
-            var iconfigurationDescriptor = builder.Services.FirstOrDefault(d => d.ServiceType == typeof(IConfiguration));
-            if (iconfigurationDescriptor?.ImplementationInstance is IConfigurationRoot configuration)
-            {
-                configurationBuilder.AddConfiguration(configuration);
-            }
-
-            configurationBuilder.AddUserSecrets<StartUp>();
-            configurationBuilder.AddEnvironmentVariables();
-            configurationBuilder.AddInMemoryCollection();
-
+            var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            configurationBuilder.AddConfiguration(configuration);
+            configurationBuilder.AddUserSecrets<Startup>();
             var config = configurationBuilder.Build();
+            services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), config));
 
-            builder.Services.Remove(builder.Services.FirstOrDefault(x => x.ServiceType == typeof(IConfigurationRoot)));
-            builder.Services.Remove(iconfigurationDescriptor);
-            builder.Services.AddSingleton<IConfigurationRoot>(config);
-            builder.Services.AddSingleton<IConfiguration>(config);
-            builder.Services.AddTrafikLab();
+            return config;
+        }
+
+        private static void AddSerializer(IServiceCollection services)
+        {
+            var contractResolver = new CamelCasePropertyNamesContractResolver();
+            services.AddSingleton(new JsonSerializer
+            {
+                ContractResolver = contractResolver
+            });
+            services.AddSingleton<IUpdateStopPointsBlobCommand, UpdateStopPointsBlobCommand>();
+            services.AddSingleton<ISerializer, NewtonsoftSerializer>();
+        }
+
+        private static void AddTrafikLab(IConfiguration config, IServiceCollection services)
+        {
+            var realTimeDeparturesApiKey = config.Get<string>("TrafikLab:RealTimeDepartures:V4:ApiKey");
+            var lineDataApiKey = config.Get<string>("TrafikLab:LineData:V1:ApiKey");
+            var defaultTimeoutInMs = config.Get<int?>("TrafikLab:DefaultTimeoutInMs", 5000);
+
+            var trafikLabSettings = new TrafikLabSettings(
+                realTimeDeparturesApiKey,
+                lineDataApiKey,
+                defaultTimeoutInMs.Value);
+
+            services.AddSingleton(trafikLabSettings);
+            services.AddTrafikLab(trafikLabSettings);
+        }
+
+        private static void AddAzureStorage(IConfiguration config, IServiceCollection services)
+        {
+            var connectionStringPath = "Azure:Storage:ConnectionString";
+            var containerNamePath = "Azure:Storage:ContainerName";
+            var connectionString = config.Get<string>(connectionStringPath);
+            var containerName = config.Get<string>(containerNamePath, "location-data");
+            var storageSettings = new StorageSettings(connectionString, containerName);
+            var azureSettings = new AzureSettings(storageSettings);
+            services.AddSingleton(azureSettings);
         }
     }
 }

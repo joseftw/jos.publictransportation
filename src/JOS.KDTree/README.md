@@ -1,0 +1,2 @@
+﻿This is a cleaned up/modified/netstandard2.0 version of SuperCluster.KDTree created by Eric Regina. https://github.com/MathFerret1013/Supercluster.KDTree
+I take no credits for the logic found in this project, I've only forked it to make it netstandard 2.0 ready.

@@ -1,0 +1,18 @@
+﻿@inherits GeolocationDebugComponentBase
+
+@if (HasGeolocation)
+{
+    <p>Your Latitude:  @ViewModel.Position.Latitude</p>
+    <p>Your Longitude: @ViewModel.Position.Longitude</p>
+    <p>Accuracy: @($"{ViewModel.Position.Accuracy}m")</p>
+    <p>Speed: @($"{ViewModel.Position.SpeedInKmPerHour}km/h") </p>
+    <p>Last updated (UTC): @ViewModel.Position.Updated</p>
+}
+else
+{
+    <p>This device does not support geolocation</p>
+}
+@if (HasGeolocationErrors)
+{
+    <p>Error @ErrorMessage</p>
+}
